@@ -1,60 +1,65 @@
 "use client";
 
-import { useState } from "react";
+import { useState, FormEvent } from "react";
 import { fetchAPI } from "@/lib/api";
+import FileDropzone from "@/components/FileDropzone";
 
 export default function Chat() {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const addMsg = (text: string) => setMessages(p => [...p, text]);
+
+  const onUpload = (file: File) => {
+    addMsg(`Sistema: Guardando "${file.name}"...`);
+    setTimeout(() => addMsg(`Sistema: "${file.name}" guardado.`), 1000);
+  };
+
+  const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!input.trim()) return;
+    if (!input.trim() || loading) return;
 
-    const currentInput = input;
+    const q = input;
     setInput("");
-    setMessages((prev) => [...prev, `Yo: ${currentInput}`]);
+    setLoading(true);
+    addMsg(`Yo: ${q}`);
 
     try {
-      const response = await fetchAPI("/query", {
-        method: "POST",
-        params: { q: currentInput }, // Enviamos 'q' como parámetro de URL
-      });
-      
-      // Intentamos mostrar la respuesta de forma legible
-      let reply = typeof response === "string" ? response : JSON.stringify(response);
-      
-      // La API devuelve { "answer": "..." }
-      if (response && response.answer) {
-          reply = response.answer;
-      } else if (response && response.response) {
-          reply = response.response;
-      }
-      
-      setMessages((prev) => [...prev, `IA: ${reply}`]);
-    } catch (error) {
-      setMessages((prev) => [...prev, "Error: Falló la conexión"]);
-      console.error(error);
+      const res = await fetchAPI("/query", { method: "POST", params: { q } });
+      addMsg(`IA: ${res.answer || res.response || JSON.stringify(res)}`);
+    } catch {
+      addMsg("Error: Falló la conexión");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div>
-      <div style={{ border: "1px solid #ccc", padding: "10px", height: "300px", overflowY: "auto", marginBottom: "10px" }}>
-        {messages.map((msg, idx) => (
-          <div key={idx} style={{ marginBottom: "5px" }}>{msg}</div>
-        ))}
+    <div className="flex flex-col gap-4">
+      <div className="border border-gray-300 rounded-lg p-3 h-80 overflow-y-auto bg-white shadow-sm font-sans text-sm">
+        {messages.map((m, i) => <div key={i} className="mb-2 border-b border-gray-100 pb-1 last:border-0">{m}</div>)}
+        {loading && <div className="text-gray-400 italic">Escribiendo...</div>}
       </div>
-      <form onSubmit={handleSubmit}>
+
+      <form onSubmit={onSubmit} className="flex gap-2">
         <input
-          type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Escribe tu mensaje..."
-          style={{ width: "70%", marginRight: "5px" }}
+          disabled={loading}
+          className="flex-1 border border-gray-300 rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
-        <button type="submit">Enviar</button>
+        <button 
+          type="submit" 
+          disabled={loading}
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+        >
+          Enviar
+        </button>
       </form>
+
+      <FileDropzone onFileSelect={onUpload} />
     </div>
   );
 }
