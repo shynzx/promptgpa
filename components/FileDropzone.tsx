@@ -13,7 +13,7 @@ export default function FileDropzone({ onFileSelect }: { onFileSelect: (f: File)
   return (
     <div
       className={`relative flex flex-col items-center justify-center w-full p-6 border-2 border-dashed rounded-lg cursor-pointer ${
-        drag ? "border-blue-500 bg-blue-50" : "border-gray-300 hover:border-gray-400 hover:bg-gray-50"
+        drag ? "border-[#826dd2] bg-[#826dd2]/10" : "border-[#d7d7d7] hover:border-[#826dd2] hover:bg-gray-50"
       }`}
       onDragOver={(e) => toggleDrag(e, true)}
       onDragLeave={(e) => toggleDrag(e, false)}
@@ -32,7 +32,7 @@ export default function FileDropzone({ onFileSelect }: { onFileSelect: (f: File)
         {drag ? (
           <>
             <svg
-              className="w-10 h-10 text-blue-500"
+              className="w-10 h-10 text-[#826dd2]"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -45,7 +45,7 @@ export default function FileDropzone({ onFileSelect }: { onFileSelect: (f: File)
                 d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
               />
             </svg>
-            <p className="text-blue-500 font-bold text-lg">Subir</p>
+            <p className="text-[#826dd2] font-bold text-lg">Subir</p>
           </>
         ) : (
           <>

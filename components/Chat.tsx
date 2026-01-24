@@ -48,12 +48,12 @@ export default function Chat() {
           onChange={(e) => setInput(e.target.value)}
           placeholder="Escribe tu mensaje..."
           disabled={loading}
-          className="flex-1 border border-gray-300 rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="flex-1 border border-[#d7d7d7] rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-[#826dd2]"
         />
         <button 
           type="submit" 
           disabled={loading}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+          className="bg-[#826dd2] text-white px-4 py-2 rounded hover:opacity-90 disabled:opacity-50"
         >
           Enviar
         </button>
